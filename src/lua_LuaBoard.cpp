@@ -117,6 +117,7 @@ int lua_SetCellSize(lua_State* luaState)
 
   luaBoard->cellSize = size;
 
+  luaBoard->MakeCells();
   luaBoard->UpdateWindowSize();
   luaBoard->MakeGrid();
 
@@ -145,6 +146,7 @@ int lua_SetWidth(lua_State* luaState)
 
   luaBoard->width = width;
 
+  luaBoard->MakeCells();
   luaBoard->UpdateWindowSize();
   luaBoard->MakeGrid();
 
@@ -173,6 +175,7 @@ int lua_SetHeight(lua_State* luaState)
 
   luaBoard->height = height;
 
+  luaBoard->MakeCells();
   luaBoard->UpdateWindowSize();
   luaBoard->MakeGrid();
 

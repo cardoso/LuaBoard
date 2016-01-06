@@ -16,6 +16,8 @@ public:
 
   int UpdateWindowSize();
 
+  int SetupLua();
+
   int MakeGrid();
   int DrawGrid();
 

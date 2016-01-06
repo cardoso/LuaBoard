@@ -16,7 +16,48 @@ LuaBoard::LuaBoard()
   this->height = 64;
   this->isGrid = true;
 
+  //LuaBoard
+  this->MakeGrid();
+  this->MakeCells();
+
   // Lua
+  this->SetupLua();
+}
+
+LuaBoard::~LuaBoard()
+{
+  lua_close(this->luaState);
+}
+
+int LuaBoard::Loop()
+{
+  sf::Event event;
+  while(this->renderWindow.pollEvent(event))
+  {
+    if(event.type == sf::Event::Closed)
+      this->renderWindow.close();
+    if(event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::R))
+      this->SetupLua();
+  }
+
+  this->renderWindow.clear(this->backgroundColor);
+
+  this->DrawCells();
+  if(isGrid) this->DrawGrid();
+
+  lua_getglobal(this->luaState, "Loop");
+  lua_pushnumber(this->luaState, this->deltaTimeClock.restart().asSeconds());
+  lua_call(this->luaState, 1, 0);
+
+  this->renderWindow.display();
+
+  this->isOpen = this->renderWindow.isOpen();
+
+  return 1;
+}
+
+int LuaBoard::SetupLua()
+{
   this->luaState = luaL_newstate();
   luaopen_base(this->luaState);
 
@@ -42,46 +83,13 @@ LuaBoard::LuaBoard()
 
   lua_getglobal(this->luaState, "Setup");
   lua_call(this->luaState, 0, 0);
-
-  //LuaBoard
-  this->MakeGrid();
-  this->MakeCells();
-}
-
-LuaBoard::~LuaBoard()
-{
-  lua_close(this->luaState);
-}
-
-int LuaBoard::Loop()
-{
-  sf::Event event;
-  while(this->renderWindow.pollEvent(event))
-  {
-    if(event.type == sf::Event::Closed)
-      this->renderWindow.close();
-  }
-
-  this->renderWindow.clear(this->backgroundColor);
-
-  this->DrawCells();
-  if(isGrid) this->DrawGrid();
-
-  lua_getglobal(this->luaState, "Loop");
-  lua_pushnumber(this->luaState, this->deltaTimeClock.restart().asSeconds());
-  lua_call(this->luaState, 1, 0);
-
-  this->renderWindow.display();
-
-  this->isOpen = this->renderWindow.isOpen();
-
-  return 1;
 }
 
 int LuaBoard::UpdateWindowSize()
 {
   uint width = (uint)this->width*(uint)this->cellSize;
   uint height = (uint)this->height*(uint)this->cellSize;
+  
   sf::Vector2u size = sf::Vector2u(width, height);
 
   this->renderWindow.setSize(size);
