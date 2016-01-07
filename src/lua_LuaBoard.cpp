@@ -25,7 +25,7 @@ int lua_SetWindowTitle(lua_State* luaState)
 
   luaBoard->renderWindow.setTitle(title);
 
-  return 1;
+  return 0;
 }
 
 int lua_SetBackgroundColor(lua_State* luaState)
@@ -58,7 +58,7 @@ int lua_SetBackgroundColor(lua_State* luaState)
 
   luaBoard->backgroundColor = sf::Color(r, g, b);
 
-  return 1;
+  return 0;
 }
 
 int lua_SetGridColor(lua_State* luaState)
@@ -92,7 +92,7 @@ int lua_SetGridColor(lua_State* luaState)
   luaBoard->gridColor = sf::Color(r, g, b);
 
 
-  return 1;
+  return 0;
 }
 
 int lua_SetCellSize(lua_State* luaState)
@@ -121,7 +121,7 @@ int lua_SetCellSize(lua_State* luaState)
   luaBoard->UpdateWindowSize();
   luaBoard->MakeGrid();
 
-  return 1;
+  return 0;
 }
 
 int lua_SetWidth(lua_State* luaState)
@@ -150,7 +150,7 @@ int lua_SetWidth(lua_State* luaState)
   luaBoard->UpdateWindowSize();
   luaBoard->MakeGrid();
 
-  return 1;
+  return 0;
 }
 
 int lua_SetHeight(lua_State* luaState)
@@ -179,7 +179,7 @@ int lua_SetHeight(lua_State* luaState)
   luaBoard->UpdateWindowSize();
   luaBoard->MakeGrid();
 
-  return 1;
+  return 0;
 }
 
 int lua_SetCellColor(lua_State* luaState)
@@ -220,6 +220,62 @@ int lua_SetCellColor(lua_State* luaState)
 
 
   luaBoard->cells[y*luaBoard->height+x] = sf::Color(r, g, b);
+
+  return 0;
+}
+
+int lua_ClearCells(lua_State* luaState)
+{
+  int argc = lua_gettop(luaState);
+
+  if(argc != 0) {
+    lua_pushstring(luaState, "LuaBoard.ClearCells(): No arguments expected");
+    lua_error(luaState);
+    return 0;
+  }
+
+
+  lua_getglobal(luaState, "p_LuaBoard");
+  LuaBoard* luaBoard = (LuaBoard*)lua_touserdata(luaState, -1);
+
+  luaBoard->ClearCells();
+
+  return 0;
+}
+
+int lua_GetMousePos(lua_State* luaState)
+{
+  int argc = lua_gettop(luaState);
+
+  if(argc != 0) {
+    lua_pushstring(luaState, "LuaBoard.GetMousePos(): No arguments expected");
+    lua_error(luaState);
+    return 0;
+  }
+
+  lua_getglobal(luaState, "p_LuaBoard");
+  LuaBoard* luaBoard = (LuaBoard*)lua_touserdata(luaState, -1);
+
+  int x = sf::Mouse::getPosition(luaBoard->renderWindow).x/luaBoard->cellSize + 1;
+  int y = sf::Mouse::getPosition(luaBoard->renderWindow).y/luaBoard->cellSize + 1;
+
+  if(x < 1)
+    x = 1;
+  else if(x > luaBoard->width)
+    x = luaBoard->width;
+    
+  if(y < 1)
+    y = 1;
+  else if(y > luaBoard->height)
+    y = luaBoard->height;
+
+  lua_newtable(luaState);
+  lua_pushstring(luaState, "x");
+  lua_pushinteger(luaState, x);
+  lua_settable(luaState, -3);
+  lua_pushstring(luaState, "y");
+  lua_pushinteger(luaState, y);
+  lua_settable(luaState, -3);
 
   return 1;
 }

@@ -13,5 +13,8 @@ int lua_SetWidth(lua_State* luaState);
 int lua_SetHeight(lua_State* luaState);
 
 int lua_SetCellColor(lua_State* luaState);
+int lua_ClearCells(lua_State* luaState);
+
+int lua_GetMousePos(lua_State* luaState);
 
 #endif

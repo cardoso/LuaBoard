@@ -16,6 +16,8 @@ LuaBoard::LuaBoard()
   this->height = 64;
   this->isGrid = true;
 
+  this->renderWindow.setVerticalSyncEnabled(true);
+
   //LuaBoard
   this->MakeGrid();
   this->MakeCells();
@@ -38,6 +40,49 @@ int LuaBoard::Loop()
       this->renderWindow.close();
     if(event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::R))
       this->SetupLua();
+
+    if(event.type == sf::Event::MouseButtonPressed)
+    {
+      lua_getglobal(this->luaState, "MouseClicked");
+      lua_pushnumber(this->luaState, event.mouseButton.button);
+
+      int x = sf::Mouse::getPosition(this->renderWindow).x/this->cellSize + 1;
+      int y = sf::Mouse::getPosition(this->renderWindow).y/this->cellSize + 1;
+
+      lua_pushinteger(this->luaState, x);
+      lua_pushinteger(this->luaState, y);
+      lua_call(this->luaState, 3, 0);
+    }
+
+    if(event.type == sf::Event::MouseButtonReleased)
+    {
+      lua_getglobal(this->luaState, "MouseReleased");
+
+      lua_pushnumber(this->luaState, event.mouseButton.button);
+
+      int x = sf::Mouse::getPosition(this->renderWindow).x/this->cellSize + 1;
+      int y = sf::Mouse::getPosition(this->renderWindow).y/this->cellSize + 1;
+
+      lua_pushinteger(this->luaState, x);
+      lua_pushinteger(this->luaState, y);
+      lua_call(this->luaState, 3, 0);
+    }
+
+    if(event.type == sf::Event::KeyPressed)
+    {
+      lua_getglobal(this->luaState, "KeyPressed");
+      lua_pushinteger(this->luaState, event.key.code);
+
+      lua_call(this->luaState, 1, 0);
+    }
+
+    if(event.type == sf::Event::KeyReleased)
+    {
+      lua_getglobal(this->luaState, "KeyReleased");
+      lua_pushinteger(this->luaState, event.key.code);
+
+      lua_call(this->luaState, 1, 0);
+    }
   }
 
   this->renderWindow.clear(this->backgroundColor);
@@ -73,6 +118,8 @@ int LuaBoard::SetupLua()
     {"SetWidth", lua_SetWidth},
     {"SetHeight", lua_SetHeight},
     {"SetCellColor", lua_SetCellColor},
+    {"ClearCells", lua_ClearCells},
+    {"GetMousePos", lua_GetMousePos},
     {NULL, NULL}
   };
 
@@ -89,7 +136,7 @@ int LuaBoard::UpdateWindowSize()
 {
   uint width = (uint)this->width*(uint)this->cellSize;
   uint height = (uint)this->height*(uint)this->cellSize;
-  
+
   sf::Vector2u size = sf::Vector2u(width, height);
 
   this->renderWindow.setSize(size);
@@ -170,20 +217,10 @@ int LuaBoard::DrawCells()
   return 1;
 }
 
-//Lua
-int LuaBoard::luaregister_Color()
+int LuaBoard::ClearCells()
 {
-  if(!luaL_newmetatable(this->luaState, "Color"))
-    return 0;
-
-
-
-  return 1;
-}
-
-int LuaBoard::lua_Color(lua_State* luaState)
-{
-  int argc = lua_gettop(luaState);
+  for(auto& cell : this->cells)
+    cell = this->backgroundColor;
 
   return 1;
 }

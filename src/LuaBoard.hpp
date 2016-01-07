@@ -23,6 +23,7 @@ public:
 
   int MakeCells();
   int DrawCells();
+  int ClearCells();
 
 public:
   bool isOpen;
@@ -46,11 +47,6 @@ private:
 // SFML
 public:
   sf::RenderWindow renderWindow;
-
-//Lua
-private:
-  int luaregister_Color();
-  int lua_Color(lua_State* luaState);
 
 
 private:
