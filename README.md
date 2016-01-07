@@ -11,6 +11,14 @@ Setup()
 
 Loop(deltaTime)
 
+KeyPressed(key)
+
+KeyReleased(key)
+
+MouseClicked(key)
+
+MouseReleased(key)
+
 
 [Functions]
 
@@ -27,3 +35,7 @@ LuaBoard.SetWidth(width)
 LuaBoard.SetHeight(height)
 
 LuaBoard.SetCellColor(x, y, r, g, b)
+
+LuaBoard.ClearCells() -- Clears the board
+
+LuaBoard.GetMousePos() -- Returns table {x, y}
