@@ -1,9 +1,20 @@
+# LuaBoard
+
 A game engine for minimalistic cell based games using lua as scripting language
 Early stages
 
+## Compiling
 
-API so far:
+### macOS
 
+```
+brew install sfml
+brew install lua
+cmake .
+make
+```
+
+## API Documentation (early)
 
 [Callbacks]
 
