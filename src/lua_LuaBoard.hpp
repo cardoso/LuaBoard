@@ -1,7 +1,7 @@
 #ifndef LUA_LUABOARD_HPP
 #define LUA_LUABOARD_HPP
 
-#include <lua.hpp>
+#include <lua/lua.hpp>
 
 int lua_SetWindowTitle(lua_State* luaState);
 

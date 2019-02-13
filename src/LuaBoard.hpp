@@ -2,7 +2,7 @@
 #define LUABOARD_HPP
 
 #include <SFML/Graphics.hpp>
-#include <lua.hpp>
+#include <lua/lua.hpp>
 
 class LuaBoard
 {

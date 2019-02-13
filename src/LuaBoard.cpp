@@ -130,6 +130,8 @@ int LuaBoard::SetupLua()
 
   lua_getglobal(this->luaState, "Setup");
   lua_call(this->luaState, 0, 0);
+
+  return 0;
 }
 
 int LuaBoard::UpdateWindowSize()
